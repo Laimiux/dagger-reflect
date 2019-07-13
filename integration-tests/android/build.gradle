@@ -18,6 +18,15 @@ android {
     targetCompatibility = JavaVersion.VERSION_1_8
   }
 
+  buildTypes {
+    debug {
+      minifyEnabled true
+      shrinkResources true
+      testProguardFile 'proguard-rules.pro'
+      proguardFile 'proguard-rules.pro'
+    }
+  }
+
   productFlavors {
     flavorDimensions 'backend'
 

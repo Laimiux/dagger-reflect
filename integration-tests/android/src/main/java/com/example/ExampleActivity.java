@@ -31,6 +31,9 @@ public final class ExampleActivity extends Activity {
     setContentView(textView);
 
     startService(new Intent(this, ExampleService.class));
+
+    final ComponentHolder.MyComponent component = ComponentHolder.create();
+    textView.setText(component.getString());
   }
 
   @Module
