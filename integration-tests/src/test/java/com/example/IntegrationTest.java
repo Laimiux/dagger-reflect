@@ -1359,10 +1359,9 @@ public final class IntegrationTest {
   }
 
   @Test
-  @ReflectBug
-  public void genericComponentBuilder() {
-    GenericComponentBuilder component = backend
-        .builder(GenericComponentBuilder.Builder.class)
+  public void genericComponentBuilderInterface() {
+    GenericComponentBuilderInterface component = backend
+        .builder(GenericComponentBuilderInterface.Builder.class)
         .bindString("one")
         .build();
 

@@ -4,12 +4,12 @@ import dagger.BindsInstance;
 import dagger.Component;
 
 @Component
-public interface GenericComponentBuilder {
+public interface GenericComponentBuilderInterface {
   String value();
 
 
   @Component.Builder
-  interface Builder extends GenericBuilder<GenericComponentBuilder> {
+  interface Builder extends GenericBuilder<GenericComponentBuilderInterface> {
     Builder bindString(@BindsInstance String instance);
   }
 
