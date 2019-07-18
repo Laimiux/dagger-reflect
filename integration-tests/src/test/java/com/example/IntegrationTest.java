@@ -1360,10 +1360,8 @@ public final class IntegrationTest {
 
   @Test
   public void genericComponentBuilderInterface() {
-    GenericComponentBuilderInterface component = backend
-        .builder(GenericComponentBuilderInterface.Builder.class)
-        .bindString("one")
-        .build();
+    GenericComponentBuilderInterface component =
+        backend.builder(GenericComponentBuilderInterface.Builder.class).bindString("one").build();
 
     assertThat(component.value()).isEqualTo("one");
   }
