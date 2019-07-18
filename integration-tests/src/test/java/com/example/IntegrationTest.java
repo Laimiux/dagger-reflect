@@ -1359,6 +1359,17 @@ public final class IntegrationTest {
   }
 
   @Test
+  @ReflectBug
+  public void genericComponentBuilder() {
+    GenericComponentBuilder component = backend
+        .builder(GenericComponentBuilder.Builder.class)
+        .bindString("one")
+        .build();
+
+    assertThat(component.value()).isEqualTo("one");
+  }
+
+  @Test
   @ReflectBug("feature not implemented")
   public void componentBindingInstance() {
     ComponentBindingInstance instance = backend.create(ComponentBindingInstance.class);
