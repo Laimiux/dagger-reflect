@@ -21,6 +21,7 @@ import static dagger.reflect.Reflection.newProxy;
 import dagger.MembersInjector;
 import dagger.Subcomponent;
 import dagger.reflect.Binding.LinkedBinding;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -39,17 +40,19 @@ final class ComponentInvocationHandler implements InvocationHandler {
     scopeBuilder.addBinding(componentKey, componentBinding);
 
     Scope scope = scopeBuilder.build();
-    C instance = newProxy(cls, new ComponentInvocationHandler(scope));
+    C instance = newProxy(cls, new ComponentInvocationHandler(cls, scope));
     componentBinding.setValue(instance);
 
     return instance;
   }
 
+  private final Class<?> rootClass;
   private final Scope scope;
   private final ConcurrentHashMap<Method, MethodInvocationHandler> handlers =
       new ConcurrentHashMap<>();
 
-  private ComponentInvocationHandler(Scope scope) {
+  private ComponentInvocationHandler(Class<?> rootClass, Scope scope) {
+    this.rootClass = rootClass;
     this.scope = scope;
   }
 
@@ -61,7 +64,7 @@ final class ComponentInvocationHandler implements InvocationHandler {
 
     MethodInvocationHandler handler = handlers.get(method);
     if (handler == null) {
-      handler = createMethodInvocationHandler(method, scope);
+      handler = createMethodInvocationHandler(rootClass, method, scope);
       MethodInvocationHandler replaced = handlers.putIfAbsent(method, handler);
       if (replaced != null) {
         handler = replaced;
@@ -71,7 +74,7 @@ final class ComponentInvocationHandler implements InvocationHandler {
   }
 
   private static ComponentInvocationHandler.MethodInvocationHandler createMethodInvocationHandler(
-      Method method, Scope scope) {
+      Class<?> rootClass, Method method, Scope scope) {
     Type returnType = method.getGenericReturnType();
     Class<?>[] parameterTypes = method.getParameterTypes();
 
@@ -95,7 +98,7 @@ final class ComponentInvocationHandler implements InvocationHandler {
     }
 
     if (parameterTypes.length == 0) {
-      Key key = Key.of(findQualifier(method.getDeclaredAnnotations()), returnType);
+      Key key = Key.of(findQualifier(method.getDeclaredAnnotations()), TypeUtil.resolveType(rootClass, returnType));
       LinkedBinding<?> binding = scope.getBinding(key);
       return new ProvisionMethodInvocationHandler(binding);
     }
