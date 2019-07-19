@@ -174,19 +174,7 @@ final class ComponentBuilderInvocationHandler implements InvocationHandler {
     Type genericReturnType = method.getGenericReturnType();
 
     if (genericReturnType != null) {
-      Class<?> declaringClass = method.getDeclaringClass();
-      TypeVariable<? extends Class<?>>[] typeParameters = declaringClass.getTypeParameters();
-      for (int i = 0; i < typeParameters.length; i++) {
-        if (typeParameters[i].equals(genericReturnType)) {
-          Type[] genericInterfaces = builderClass.getGenericInterfaces();
-          for (Type genericInterface : genericInterfaces) {
-            ParameterizedType implementationType = (ParameterizedType) genericInterface;
-            if (implementationType.getRawType().equals(declaringClass)) {
-              return implementationType.getActualTypeArguments()[i];
-            }
-          }
-        }
-      }
+      return TypeUtil.resolveType(builderClass, genericReturnType);
     }
 
     return method.getReturnType();

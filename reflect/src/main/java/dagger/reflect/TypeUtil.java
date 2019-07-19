@@ -16,8 +16,10 @@
 package dagger.reflect;
 
 import java.lang.reflect.GenericArrayType;
+import java.lang.reflect.GenericDeclaration;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 import org.jetbrains.annotations.Nullable;
@@ -55,6 +57,26 @@ final class TypeUtil {
     } else {
       return type; // This type is unsupported!
     }
+  }
+
+  static Type resolveType(Class<?> rootClass, Type type) {
+    if (type instanceof java.lang.reflect.TypeVariable) {
+      final GenericDeclaration genericDeclaration = ((java.lang.reflect.TypeVariable) type).getGenericDeclaration();
+      final TypeVariable<?>[] typeParameters = genericDeclaration.getTypeParameters();
+      for (int i = 0; i < typeParameters.length; i++) {
+        if (typeParameters[i].equals(type)) {
+          Type[] genericInterfaces = rootClass.getGenericInterfaces();
+          for (Type genericInterface : genericInterfaces) {
+            ParameterizedType implementationType = (ParameterizedType) genericInterface;
+            if (implementationType.getRawType().equals(genericDeclaration)) {
+              return implementationType.getActualTypeArguments()[i];
+            }
+          }
+        }
+      }
+    }
+
+    return type;
   }
 
   static int hashCodeOrZero(@Nullable Object o) {

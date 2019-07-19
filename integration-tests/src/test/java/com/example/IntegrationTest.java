@@ -289,6 +289,12 @@ public final class IntegrationTest {
   }
 
   @Test
+  public void genericComponentInterface() {
+    final GenericComponentInterface.Component1 component = backend.create(GenericComponentInterface.Component1.class);
+    assertThat(component.value()).isEqualTo("value");
+  }
+
+  @Test
   public void providerUnscopedBinding() {
     ProviderUnscopedBinding component = backend.create(ProviderUnscopedBinding.class);
     Provider<String> value = component.value();
