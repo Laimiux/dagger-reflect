@@ -178,11 +178,11 @@ final class ComponentBuilderInvocationHandler implements InvocationHandler {
       Class<?> declaringClass = method.getDeclaringClass();
       TypeVariable<? extends Class<?>>[] typeParameters = declaringClass.getTypeParameters();
       for (int i = 0; i < typeParameters.length; i++) {
-        if (typeParameters[i] == genericReturnType) {
+        if (typeParameters[i].equals(genericReturnType)) {
           Type[] genericInterfaces = builderClass.getGenericInterfaces();
           for (Type genericInterface : genericInterfaces) {
             ParameterizedType implementationType = (ParameterizedType) genericInterface;
-            if (implementationType.getRawType() == declaringClass) {
+            if (implementationType.getRawType().equals(declaringClass)) {
               return implementationType.getActualTypeArguments()[i];
             }
           }
